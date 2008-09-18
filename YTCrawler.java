@@ -4,12 +4,16 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
-public class YTCrawler {
+public class YTCrawler extends Thread {
+	static final Object NO_MORE_WORK = new Object();
+
+
+	private int _crawler_id;
 	private int _parse_error;
 	
 	private Visited _visited;
 	private Todo _todo;
-	private Network _n;
+	private Network _network;
 	private String _pageid;
 	
 	private String _contents;
@@ -31,15 +35,39 @@ public class YTCrawler {
 	
 	private int _tempsearch;
 
-	public YTCrawler(Visited v, Todo t, Network n)
+	public YTCrawler(Visited v, Todo t, Network n, int cid)
 	{
 		 _visited = v;
 		 _todo = t;
-		 _n = n;
+		 _network = n;
 		 
 		 _contents = "";
-		 _related = new Vector();
+		 _related = new Vector<String>();
 		 
+		 _crawler_id = cid;
+	}
+	
+	public void run()
+	{
+        try {
+            while (true) {
+                // Retrieve some work; block if the queue is empty
+            	System.out.println("Crawler " + _crawler_id + " waiting for work...");
+                String work = _todo.pop();
+
+                // Terminate if the end-of-stream marker was retrieved
+                if (work == NO_MORE_WORK) {
+                    break;
+                }
+                
+                _pageid = work;
+        		crawlPage();
+
+            }
+        } catch (InterruptedException e) {
+        }
+		
+		
 	}
 	
 	public void printData() {
@@ -105,6 +133,30 @@ public class YTCrawler {
 	}
 	
 	/**
+	 * Handle all the post-crawl stuff 
+	 * - Determine if the crawled page needs to be added to the network
+	 * (perhaps we only want to crawl a specific part of the network, filters can be added here!)
+	 * - Add related movies to todo list
+	 * - Add this page to visited list (even if we don't add it to the network, we can add it to the 
+	 *   visited list to make sure we don't crawl it again! 
+	 * @return
+	 */
+	private int pageToNetwork()
+	{
+		_visited.add(_pageid);
+		// add every visited page
+		String s;
+		for (int k =0; k < _related.size(); k++){
+			s = _related.elementAt(k); 
+			if (!_visited.inList(s) && !_todo.inList(s)) 
+				_todo.add(s);// if we haven't visited it before AND it's not already in the todo list THEN add it to the todo list
+		}
+			
+		_network.writeData("crawler " + _crawler_id + " finished crawling " + _pageid + " " + _title +"\n");
+		return 0;
+	}
+	
+	/**
 	 * Parse the page
 	 * the order in which we find the different keywords is important!!
 	 */
@@ -141,33 +193,32 @@ public class YTCrawler {
 		
 	}
 	
-	public int crawlPage(String pageid)
+	private int crawlPage()
 	{
-		_pageid = pageid; // store the page id internally for future use
 		StringBuilder b = new StringBuilder();
 
 		try
 		{
+			System.out.println(_crawler_id + " crawling " + _pageid );
+
 			URL url = new URL("http://www.youtube.com/watch?v=" + _pageid);
 			URLConnection uc = url.openConnection();
 			uc.setReadTimeout(10000);
 		
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(
-							uc.getInputStream()));
-			String inputLine;
+			BufferedReader in = new BufferedReader(   new InputStreamReader(  uc.getInputStream()  )   );
 
-			while ((inputLine = in.readLine()) != null)
-			{
-				// regel voor regel de gegevens intern opslaan
-				b.append(inputLine + "\n");
-			}
+			String inputLine;
+			while ((inputLine = in.readLine()) != null) 
+				b.append(inputLine + "\n"); // regel voor regel de gegevens intern opslaan
 				
 			in.close();
 		 
 			_contents = b.toString();
 			
-			return parsePage();
+			if (parsePage() == 0) 
+				return pageToNetwork();
+			else 
+				return -1;
 		} catch (Exception ex)
 		{
 			return -1;
