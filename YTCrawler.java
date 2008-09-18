@@ -7,7 +7,7 @@ import java.util.*;
 public class YTCrawler extends Thread {
 	static final Object NO_MORE_WORK = new Object();
 
-
+	
 	private int _crawler_id;
 	private int _parse_error;
 	
@@ -16,7 +16,7 @@ public class YTCrawler extends Thread {
 	private Network _network;
 	private String _pageid;
 	
-	private String _contents;
+	private StringBuilder _contents;
 
 	private String _description; //21
 	private String _labels; //22
@@ -41,33 +41,41 @@ public class YTCrawler extends Thread {
 		 _todo = t;
 		 _network = n;
 		 
-		 _contents = "";
+		 _contents = new StringBuilder();
 		 _related = new Vector<String>();
 		 
 		 _crawler_id = cid;
+		 
 	}
 	
 	public void run()
 	{
         try {
             while (true) {
+            	
                 // Retrieve some work; block if the queue is empty
-            	System.out.println("Crawler " + _crawler_id + " waiting for work...");
+            	System.out.println(_crawler_id + " waiting for work... (available: " + _todo.getSize() + " done: " + _visited.getSize() + ")");
                 String work = _todo.pop();
 
                 // Terminate if the end-of-stream marker was retrieved
-                if (work == NO_MORE_WORK) {
+                if (work == NO_MORE_WORK) 
                     break;
-                }
                 
                 _pageid = work;
         		crawlPage();
 
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
+			System.out.println(" inturupted"+e);
         }
 		
 		
+	}
+	
+	public int crawlPage(String p)
+	{
+		_pageid = p;
+		return crawlPage();
 	}
 	
 	public void printData() {
@@ -195,10 +203,10 @@ public class YTCrawler extends Thread {
 	
 	private int crawlPage()
 	{
-		StringBuilder b = new StringBuilder();
-
 		try
 		{
+			_contents.delete(0, _contents.length());
+
 			System.out.println(_crawler_id + " crawling " + _pageid );
 
 			URL url = new URL("http://www.youtube.com/watch?v=" + _pageid);
@@ -208,12 +216,14 @@ public class YTCrawler extends Thread {
 			BufferedReader in = new BufferedReader(   new InputStreamReader(  uc.getInputStream()  )   );
 
 			String inputLine;
-			while ((inputLine = in.readLine()) != null) 
-				b.append(inputLine + "\n"); // regel voor regel de gegevens intern opslaan
+			while ((inputLine = in.readLine()) != null)
+				_contents.append(inputLine); // regel voor regel de pagina inlezen
 				
+			
 			in.close();
-		 
-			_contents = b.toString();
+		
+
+			System.out.println(_crawler_id + " finished downloading " + _pageid );
 			
 			if (parsePage() == 0) 
 				return pageToNetwork();
@@ -221,6 +231,7 @@ public class YTCrawler extends Thread {
 				return -1;
 		} catch (Exception ex)
 		{
+			System.out.println("WHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA WAT IS DAT");
 			return -1;
 		}
 	}
