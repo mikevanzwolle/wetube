@@ -1,5 +1,7 @@
 public class WeTube {
-		
+	
+	private static int _maxThreads = 10; 
+	
 	public static void main( String args[] ) throws Exception
 	{
 		System.out.println("WeTube - a YouTube Video's Crawler");
@@ -9,9 +11,16 @@ public class WeTube {
 		Todo todo = new Todo();
 		Network network = new Network();
 		
-		YTCrawler c = new YTCrawler(visited, todo, network);
-		System.out.println("crawl: " + c.crawlPage("q_D_Aeqcidc"));
-		c.printData();
+		todo.add("q_D_Aeqcidc");
+
+		YTCrawler crawlers[] = new YTCrawler[_maxThreads];
+		for (int i = 0; i < _maxThreads; i++)
+			crawlers[i] = new YTCrawler(visited, todo, network, i);
+		
+		for (int i = 0; i < _maxThreads; i++)
+			crawlers[i].start();
+		
+		System.out.println("What is going on man!!!");
 	}
 
 }
