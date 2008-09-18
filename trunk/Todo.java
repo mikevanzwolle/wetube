@@ -52,8 +52,8 @@ public class Todo {
 	   String s = ""; 
 	   s = _list.remove(0);
 	   _hash.remove(s);
-	   notify();
 
+	   notify();
 	   return s;
    }
   
@@ -62,8 +62,5 @@ public class Todo {
     * Get the size of the todo list
     * @return
     */
-   public synchronized int getSize()
-   {
-	   return _list.size();
-   }
+   public synchronized int getSize() { return _list.size();  }
 }

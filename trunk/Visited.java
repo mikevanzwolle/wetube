@@ -49,4 +49,10 @@ public class Visited {
 			
 		return -1; // an error occurred, the String s is already present in the hashtable
    }
+	
+	   /** 
+	    * Get the size of the visited list
+	    * @return
+	    */
+	   public synchronized int getSize() { return _list.size();  }	
 }
