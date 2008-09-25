@@ -15,6 +15,7 @@ public class YTCrawler extends Thread {
 	private Todo _todo;
 	private Network _network;
 	private String _pageid;
+	private String _policy;
 	
 	private StringBuilder _contents;
 
@@ -35,7 +36,7 @@ public class YTCrawler extends Thread {
 	
 	private int _tempsearch;
 
-	public YTCrawler(Visited v, Todo t, Network n, int cid)
+	public YTCrawler(Visited v, Todo t, Network n, int cid, String policy)
 	{
 		 _visited = v;
 		 _todo = t;
@@ -45,6 +46,7 @@ public class YTCrawler extends Thread {
 		 _related = new Vector<String>();
 		 
 		 _crawler_id = cid;
+		 _policy = policy;
 		 
 	}
 	
@@ -151,8 +153,6 @@ public class YTCrawler extends Thread {
 	 */
 	private int pageToNetwork()
 	{
-		_visited.add(_pageid);
-		// add every visited page
 		String s;
 		for (int k =0; k < _related.size(); k++){
 			s = _related.elementAt(k); 
@@ -174,7 +174,7 @@ public class YTCrawler extends Thread {
 		_tempsearch = 0;
 		_related.clear();
 
-		_description = getTextBetween("<meta name=\"description\" content=\"","\">");
+//		_description = getTextBetween("<meta name=\"description\" content=\"","\">");
 		_labels = getTextBetween("<meta name=\"keywords\" content=\"","\">");
 		_movielength = getTextBetween("\", \"l\":",","); 
 		_title = getTextBetween("<h1 >","</h1>"); // perhaps we can also move this up, because at the top of the page we can find: ... <meta name="title" content="
@@ -184,8 +184,8 @@ public class YTCrawler extends Thread {
 		_videomessages = getTextBetween("<span id=\"watch-comments-numresponses\">","</span>");
 		_textmessages = getTextBetween("<span class=\"number-of-comments\">","</span>");
 		_user = getTextBetween("hLink fn n contributor\">","</a>");
-
 		_date = getTextBetween("watch-video-added post-date\">","</span>");
+		_description = getTextBetween("watch-video-desc description\">\t\t\t\t\t<span >","</span>");
 		_category = getTextBetween("VideoWatch/VideoCategoryLink');\">","</a>");
 		
 		String s = getNextRelated();
@@ -194,6 +194,9 @@ public class YTCrawler extends Thread {
 			_related.add(s);
 			s = getNextRelated();
 		}
+		
+		if (_category.indexOf(_policy) < 0)
+			_parse_error = -1;
 		
 		return _parse_error;
 
@@ -205,6 +208,8 @@ public class YTCrawler extends Thread {
 	{
 		try
 		{
+			_visited.add(_pageid); // zorg ervoor dat wat er ook gebeurd de pagina niet meer bekeken gaat worden.. 
+			
 			_contents.delete(0, _contents.length());
 
 			System.out.println(_crawler_id + " crawling " + _pageid );
