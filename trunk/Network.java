@@ -56,7 +56,7 @@ public class Network {
 		{
 			_out.flush();
 			_out.close();
-			copyfile("netwerk.txt",s + ".txt");
+			copyfile("network.txt",s + ".txt");
 			_out = new BufferedWriter(new FileWriter("network.txt", true)); // and continue writing with the old file
 		} catch (Exception ex)
 		{
