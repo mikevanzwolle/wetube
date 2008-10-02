@@ -3,7 +3,7 @@ import java.io.*;
 
 public class WeTube {
 	
-	private static int _maxThreads = 30; 
+	private static int _maxThreads = 20; 
 //	private static String _POLICY = "Auto's & voertuigen"; // extended crawler type of policy (text based)
 	private static String _POLICY = "28"; // related crawler type of policy (28 == wetenschap en techniek)
 	private static int _RETRYCOUNT = 3;
@@ -32,11 +32,13 @@ public class WeTube {
 		for (int i = 0; i < _maxThreads; i++)
 		{
 			crawlers[i] = new YTCrawler_Related(visited, todo, network, i, _POLICY, _RETRYCOUNT, manager);
+		    crawlers[i].setPriority(2);
 		    crawlers[i].start();
 		}
 
 		// every once in a while write the todo and visited lists to files (it's kinda difficult, because all threads must first be paused...)
 		// the manager takes care of this!
+	    manager.setPriority(2);
 		manager.start();  
 	}
 
