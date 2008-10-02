@@ -22,14 +22,16 @@ public class PageidList {
 		   while (line != null){
 			   if (line.charAt(0) != '#')
 			   		add(line);
-			   System.out.println(i);
+			   if (i % 1000 == 0)
+			      System.out.print(".");
 			   i++;
 			   line = bufRead.readLine();
 		   }
 		   
 	   }catch (Exception ex)
 	   {
-		   System.out.println("Error reading from file "  + f + "  " + ex);
+		   System.out.println("\n" + ex);
+		   System.exit(0);
 	   }
    }
    
