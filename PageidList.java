@@ -37,7 +37,7 @@ public class PageidList {
    {
 		try
 		{
-			BufferedWriter out = new BufferedWriter(new FileWriter(s + _hash.size() + ".txt"));
+			BufferedWriter out = new BufferedWriter(new FileWriter(s + ".txt"));
 			Enumeration<String> en = _hash.elements();
 			while (en.hasMoreElements()) 
 				out.write( en.nextElement() + "\n");

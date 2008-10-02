@@ -5,10 +5,10 @@ public class Network {
 	
 	BufferedWriter _out;
 	
-	public Network(String line, boolean appendmode){
+	public Network(String line){
 		try
 		{
-			_out = new BufferedWriter(new FileWriter("network.txt", appendmode));
+			_out = new BufferedWriter(new FileWriter("network.txt", false));
 			_out.write(line + "\n");
 			_out.flush();
 		} catch (Exception ex)
@@ -18,6 +18,52 @@ public class Network {
 		
 	}//constructor
 	
+	
+	  private void copyfile(String srFile, String dtFile)
+	  {
+		    try{
+		      File f1 = new File(srFile);
+		      File f2 = new File(dtFile);
+		      InputStream in = new FileInputStream(f1);
+		      
+		      //For Append the file.
+//		      OutputStream out = new FileOutputStream(f2,true);
+
+		      //For Overwrite the file.
+		      OutputStream out = new FileOutputStream(f2);
+
+		      byte[] buf = new byte[1024];
+		      int len;
+		      while ((len = in.read(buf)) > 0){
+		        out.write(buf, 0, len);
+		      }
+		      in.close();
+		      out.close();
+		      System.out.println("File copied.");
+		    }
+		    catch(FileNotFoundException ex){
+		      System.out.println(ex.getMessage() + " in the specified directory.");
+		      System.exit(0);
+		    }
+		    catch(IOException e){
+		      System.out.println(e.getMessage());      
+		    }
+	  }	
+	
+	public void writeNetworkToFile(String s)
+	{
+		try
+		{
+			_out.flush();
+			_out.close();
+			copyfile("netwerk.txt",s + ".txt");
+			_out = new BufferedWriter(new FileWriter("network.txt", true)); // and continue writing with the old file
+		} catch (Exception ex)
+		{
+			System.out.println("Foutje! " + ex);
+		}
+		
+	}
 	public synchronized void writeData(String pageid, String title, String user, String date, String description, String labels, String category, String movielength, String rating, String numratings, String views, String textmessages, String videomessages, Vector<String> related)
 	{
 		try{

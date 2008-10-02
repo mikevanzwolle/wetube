@@ -22,12 +22,12 @@ public class WeTube {
 //		todo.add("fPJzhTi47LE");
 		todo.readFromFile("intodo.txt");
 		visited.readFromFile("invisited.txt");
-		Network network = new Network(line, todo.getSize() > 100);
+		Network network = new Network(line);
 		
 		System.out.println("Press [enter] to continue...");
 		br.readLine();
 		YTCrawler_Related crawlers[] = new YTCrawler_Related[_maxThreads];
-		Manager manager = new Manager(visited, todo, _maxThreads);
+		Manager manager = new Manager(visited, todo, network, _maxThreads);
 
 		for (int i = 0; i < _maxThreads; i++)
 		{
