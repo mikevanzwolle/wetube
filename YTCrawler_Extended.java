@@ -76,7 +76,6 @@ public class YTCrawler_Extended extends Thread {
             		
             	if (!wait)
             	{
-        			System.out.println("Crawler is done holding!");
             		int errorCounter = 0;
             		// Retrieve some work; block if the queue is empty
             		String work = _todo.pop();

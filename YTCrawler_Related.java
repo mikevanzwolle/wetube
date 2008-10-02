@@ -65,7 +65,6 @@ public class YTCrawler_Related extends Thread {
             		
             	if (!wait)
             	{
-        			System.out.println("Crawler is done holding!");
             		int errorCounter = 0;
             		// Retrieve some work; block if the queue is empty
             		String work = _todo.pop();
@@ -139,7 +138,7 @@ public class YTCrawler_Related extends Thread {
 			s = _related.elementAt(k); 
 			if (!_visited.inList(s) && !_todo.inList(s)) 
 			{
-				System.out.println("    " + _crawler_id + " adding to todo " + s);
+//				System.out.println("    " + _crawler_id + " adding to todo " + s);
 				_todo.add(s);// if we haven't visited it before AND it's not already in the todo list THEN add it to the todo list
 			}
 		}
