@@ -3,14 +3,12 @@ import java.util.Vector;
 
 public class Network {
 	
-	BufferedWriter _out;
+	FileWriter _out;
 	
 	public Network(String line){
 		try
 		{
-			_out = new BufferedWriter(new FileWriter("network.txt", false));
-			_out.write("#  " + line + "\n");
-			_out.flush();
+			_out = new FileWriter("network.txt", false);
 		} catch (Exception ex)
 		{
 			System.out.println("Error opening network file for writing...");
@@ -44,17 +42,24 @@ public class Network {
 	  
 	  public void readFromFile(String s)
 	  {
-		  copyfile(s, "network.txt");
+		  try
+		  {
+			  _out.close();
+			  copyfile(s, "network.txt");
+   			  _out = new FileWriter("network.txt", true); // and continue writing with the old file
+		  } catch (Exception ex)
+		  {
+			  
+		  }
 	  }
 	
 	public void writeNetworkToFile(String s)
 	{
 		try
 		{
-			_out.flush();
 			_out.close();
 			copyfile("network.txt",s + ".txt");
-			_out = new BufferedWriter(new FileWriter("network.txt", true)); // and continue writing with the old file
+			_out = new FileWriter("network.txt", true); // and continue writing with the old file
 		} catch (Exception ex)
 		{
 			System.out.println("Foutje! " + ex);
