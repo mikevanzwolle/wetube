@@ -88,6 +88,7 @@ public class YTCrawler_Extended extends Thread {
             		
             		int r = crawlPage();
             		while ( (r < 0) 
+            				&& (r != _POLICY_MISMATCH) 
             				&& (errorCounter < _retry-1)) 
             		{
             			System.out.println("RETRY");
@@ -147,6 +148,7 @@ public class YTCrawler_Extended extends Thread {
 		}
 
 		_parse_error = -1; // if we get to this point, something must have gone wrong!
+//		System.out.println("JEMMMMMMMMMMMMMMMMMIG: " + s1 + "|" + s2 + " i:" + i);
 		return "";
 	}
 	
@@ -213,7 +215,9 @@ public class YTCrawler_Extended extends Thread {
 		_textmessages = getTextBetween("<span class=\"number-of-comments\">","</span>");
 		_user = getTextBetween("hLink fn n contributor\">","</a>");
 		_date = getTextBetween("watch-video-added post-date\">","</span>");
-		_description = getTextBetween("watch-video-desc description\">\t\t\t\t\t<span >","</span>");
+		_description = getTextBetween("watch-video-desc description\">","</span>");
+		_description = _description.substring(_description.indexOf(">") + 1);
+		 
 		_category = getTextBetween("VideoWatch/VideoCategoryLink');\">","</a>");
 		
 		
@@ -227,13 +231,13 @@ public class YTCrawler_Extended extends Thread {
 		
 		if (_category.indexOf(_policy) < 0)
 			_parse_error = _POLICY_MISMATCH; // wrong policy
-		else if (_related.size() < 10)  
+		else if (_related.size() < 20)  
 			_parse_error = _RELATED_ERROR; // if the related links were still loading...
 		
 		if (_parse_error < 0)
 		{
-			System.out.println("Policy : " + _policy + "   Error: " + _parse_error + "   Related Size: " + _related.size());
-			printToFile(_pageid + ".html");
+//			System.out.println("Category:  " + _category + "  Policy : " + _policy + "   Error: " + _parse_error + "   Related Size: " + _related.size());
+//			printToFile(_pageid + ".html");
 		}
 		
 		return _parse_error;

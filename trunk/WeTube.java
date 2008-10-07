@@ -4,15 +4,13 @@ import java.io.*;
 public class WeTube {
 	
 	private static int _maxThreads = 20; 
-//	private static String _POLICY = "Auto's & voertuigen"; // extended crawler type of policy (text based)
-	private static String _POLICY = "28"; // related crawler type of policy (28 == wetenschap en techniek)
 	private static int _RETRYCOUNT = 3;
 	
 	public static void main( String args[] ) throws Exception
 	{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
-		String line = "--- WeTube - a YouTube Video Crawler - Category: " +  _POLICY + " - Super Fast Version, Crawl Category Only!! --- \n"; 
+		String line = "--- WeTube - a YouTube Video Crawler - Super Fast Version, Crawl Category Only!! --- \n"; 
 		System.out.println(line);
 		
 		// initialize the visited, todo and network objects
@@ -36,12 +34,14 @@ public class WeTube {
 
 		System.out.println("Starting the crawling process...");
 		
-		YTCrawler_Related crawlers[] = new YTCrawler_Related[_maxThreads];
+//		YTCrawler_Related crawlers[] = new YTCrawler_Related[_maxThreads];
+		YTCrawler_Extended crawlers[] = new YTCrawler_Extended[_maxThreads];
 		Manager manager = new Manager(visited, todo, network, _maxThreads);
 
 		for (int i = 0; i < _maxThreads; i++)
 		{
-			crawlers[i] = new YTCrawler_Related(visited, todo, network, i, _POLICY, _RETRYCOUNT, manager);
+//			crawlers[i] = new YTCrawler_Related(visited, todo, network, i, "28", _RETRYCOUNT, manager);
+			crawlers[i] = new YTCrawler_Extended(visited, todo, network, i, "Wetenschap en technologie", _RETRYCOUNT, manager);
 		    crawlers[i].setPriority(2);
 		    crawlers[i].start();
 		}
