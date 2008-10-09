@@ -21,7 +21,7 @@ public class PageidList {
 		   String line = bufRead.readLine();
 		   while (line != null){
 			   if (line.charAt(0) != '#')
-			   		add(line);
+				   fastAdd(line);
 			   if (i % 1000 == 0)
 			      System.out.print(".");
 			   i++;
@@ -81,6 +81,16 @@ public class PageidList {
 	   return -1;
    }
 
+   /**
+    * add a unique ID to the list.
+    * if it fails -1 is returned
+    * we assume the unique ID is not included in the Visited ID's 
+    */
+    public synchronized int fastAdd(String s)
+    {
+	   _hash.put(s,s);
+	   return 0;
+    }
    
    /**
     * Pop the first item of the todo list off the list!
