@@ -34,14 +34,14 @@ public class WeTube {
 
 		System.out.println("Starting the crawling process...");
 		
-//		YTCrawler_Related crawlers[] = new YTCrawler_Related[_maxThreads];
-		YTCrawler_Extended crawlers[] = new YTCrawler_Extended[_maxThreads];
+		YTCrawler_Related crawlers[] = new YTCrawler_Related[_maxThreads];
+//		YTCrawler_Extended crawlers[] = new YTCrawler_Extended[_maxThreads];
 		Manager manager = new Manager(visited, todo, network, _maxThreads);
 
 		for (int i = 0; i < _maxThreads; i++)
 		{
-//			crawlers[i] = new YTCrawler_Related(visited, todo, network, i, "28", _RETRYCOUNT, manager);
-			crawlers[i] = new YTCrawler_Extended(visited, todo, network, i, "Wetenschap en technologie", _RETRYCOUNT, manager);
+			crawlers[i] = new YTCrawler_Related(visited, todo, network, i, "28", _RETRYCOUNT, manager);
+//			crawlers[i] = new YTCrawler_Extended(visited, todo, network, i, "Wetenschap en technologie", _RETRYCOUNT, manager);
 		    crawlers[i].setPriority(2);
 		    crawlers[i].start();
 		}
