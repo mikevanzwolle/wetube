@@ -1,14 +1,14 @@
 import java.io.*;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 
 public class PageidList {
-   Hashtable<String, String> _hash;
+   TreeSet<String> _set;
+   
    String _filename;
    
    public PageidList(String line, String filename)
    {
-		_hash = new Hashtable<String, String>();
+		_set = new TreeSet<String>();
 		_filename = filename;
    }
    
@@ -40,9 +40,9 @@ public class PageidList {
 		try
 		{
 			BufferedWriter out = new BufferedWriter(new FileWriter(s + ".txt"));
-			Enumeration<String> en = _hash.elements();
-			while (en.hasMoreElements()) 
-				out.write( en.nextElement() + "\n");
+			Iterator<String> iter = _set.iterator();
+			while (iter.hasNext()) 
+				out.write( iter.next() + "\n");
 			
 			out.flush();
 			out.close();
@@ -60,7 +60,7 @@ public class PageidList {
     */
    public synchronized boolean inList(String s)
    {
-	   return _hash.contains(s);
+	   return _set.contains(s);
    }   
    
   /**
@@ -70,10 +70,8 @@ public class PageidList {
    */
    public synchronized int add(String s)
    {
-	   if (!inList(s))
+	   if (_set.add(s))
 	   {
-		   // add the item to the list
-		   _hash.put(s,s);
 		   notify();
 		   return 0;
 	   }
@@ -88,7 +86,7 @@ public class PageidList {
     */
     public synchronized int fastAdd(String s)
     {
-	   _hash.put(s,s);
+    	_set.add(s);
 	   return 0;
     }
    
@@ -98,11 +96,10 @@ public class PageidList {
     */
    public synchronized String pop() throws InterruptedException
    {
-       while (_hash.size() == 0)  
+       while (_set.size() == 0)  
            wait();
 	   
-	   String s = _hash.elements().nextElement();
-	   _hash.remove(s);
+	   String s = _set.pollFirst();
 
 	   notify();
 	   return s;
@@ -113,6 +110,6 @@ public class PageidList {
     * Get the size of the todo list
     * @return
     */
-   public synchronized int getSize() { return _hash.size();  }
+   public synchronized int getSize() { return _set.size();  }
 
 }
