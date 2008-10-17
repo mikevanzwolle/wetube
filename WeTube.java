@@ -3,7 +3,7 @@ import java.io.*;
 
 public class WeTube {
 	
-	private static int _maxThreads = 20; 
+	private static int _maxThreads = 25; 
 	private static int _RETRYCOUNT = 3;
 	
 	public static void main( String args[] ) throws Exception
