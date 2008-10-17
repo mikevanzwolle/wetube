@@ -37,7 +37,7 @@ public class Manager extends Thread{
 		{		
 			if (_timeToWrite == 0) 
 			{
-				int i = _visited.getSize() - _lastWrite;
+				int i = (_visited.getSize()-_todo.getSize()) - _lastWrite;
 				if (i > 10000)
 				{
 					_timeToWait = true;

@@ -72,7 +72,7 @@ public class YTCrawler_Related extends Thread {
             		if (work == NO_MORE_WORK) 
             			break;
                
-            		System.out.println(_crawler_id + " retrieved from todo " + work + " (available: " + _todo.getSize() + " done: " + _visited.getSize() + ")");
+            		System.out.println(_crawler_id + " retrieved from todo " + work + " (available: " + _todo.getSize() + " done: " + (_visited.getSize() - _todo.getSize())+ ")");
             		_pageid = work;
             		
             		int r = crawlPage();
@@ -137,11 +137,8 @@ public class YTCrawler_Related extends Thread {
 		String s;
 		for (int k =0; k < _related.size(); k++){
 			s = _related.elementAt(k); 
-			if (!_visited.inList(s) && !_todo.inList(s)) 
-			{
-//				System.out.println("    " + _crawler_id + " adding to todo " + s);
-				_todo.add(s);// if we haven't visited it before AND it's not already in the todo list THEN add it to the todo list
-			}
+			if (_visited.add(s) == 0) // TRY to add the item to the visited list
+				_todo.add(s);// if we haven't visited it before then TRY to add it to the todo list
 		}
 			
 		_network.writeDataSimple(_pageid, _related);
@@ -183,7 +180,6 @@ public class YTCrawler_Related extends Thread {
 		try
 		{
 			System.out.println("  " + _crawler_id + " crawling " + _pageid + " added to visited");
-			_visited.add(_pageid); // zorg ervoor dat wat er ook gebeurd de pagina niet meer bekeken gaat worden.. 
 			_contents.delete(0, _contents.length());
 
 
