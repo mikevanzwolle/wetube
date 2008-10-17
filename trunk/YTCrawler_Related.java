@@ -83,6 +83,7 @@ public class YTCrawler_Related extends Thread {
             			errorCounter++;
             			crawlPage(); // try again!!!
             		}
+            		
             	}
             }
         } catch (Exception e) {
@@ -157,9 +158,11 @@ public class YTCrawler_Related extends Thread {
 		_related.clear();
 
 		String s = getTextBetween("translated_short_prefix_", "\" class=");
+		int findRelated = 0;
 		while ( !s.equals("") )
 		{
-			String cat = getTextBetween("<a href=\"/results?search_category=","\"");
+			findRelated++;
+			String cat = getTextBetween("href=\"/results?search_category=","\"");
 			
 			if (cat.equals(_policy))
 				_related.add(s);
@@ -167,8 +170,8 @@ public class YTCrawler_Related extends Thread {
 			s = getTextBetween("translated_short_prefix_", "\" class=");
 		}
 		
-		if (_related.size() <= 0) 
-			_parse_error = _GENERAL_ERROR;
+		if (findRelated < 1)
+			_parse_error = _GENERAL_ERROR; // if no related links were found at all
 		else
 			_parse_error = 0;
 
@@ -209,4 +212,19 @@ public class YTCrawler_Related extends Thread {
 		}
 	}
 
+	
+	public void printToFile(String s)
+	{
+	      try{
+	    	    // Create file 
+	    	    FileWriter fstream = new FileWriter(s);
+	    	        BufferedWriter out = new BufferedWriter(fstream);
+	    	       
+	    	    out.write(_contents.toString());
+	    	    //Close the output stream
+	    	    out.close();
+	    	    }catch (Exception e){//Catch exception if any
+	    	      System.err.println("Error: " + e.getMessage());
+	    	    }
+	}		
 }
