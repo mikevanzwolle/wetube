@@ -36,8 +36,7 @@ public class WeTube {
 		
 		YTCrawler_Related crawlers[] = new YTCrawler_Related[_maxThreads];
 //		YTCrawler_Extended crawlers[] = new YTCrawler_Extended[_maxThreads];
-		Manager manager = new Manager(visited, todo, network, _maxThreads);
-
+		Manager manager = new Manager(visited, todo, network, _maxThreads, 10000);
 		for (int i = 0; i < _maxThreads; i++)
 		{
 			crawlers[i] = new YTCrawler_Related(visited, todo, network, i, "28", _RETRYCOUNT, manager);
