@@ -3,12 +3,14 @@ import java.util.*;
 
 public class PageidList {
    TreeSet<String> _set;
+   LinkedList<String> _queue;
    
    String _filename;
    
    public PageidList(String line, String filename)
    {
 		_set = new TreeSet<String>();
+		_queue = new LinkedList<String>();
 		_filename = filename;
    }
    
@@ -40,7 +42,7 @@ public class PageidList {
 		try
 		{
 			BufferedWriter out = new BufferedWriter(new FileWriter(s + ".txt"));
-			Iterator<String> iter = _set.iterator();
+			Iterator<String> iter = _queue.iterator();
 			while (iter.hasNext()) 
 				out.write( iter.next() + "\n");
 			
@@ -72,6 +74,7 @@ public class PageidList {
    {
 	   if (_set.add(s))
 	   {
+		   _queue.add(s);
 		   notify();
 		   return 0;
 	   }
@@ -87,6 +90,7 @@ public class PageidList {
     public synchronized int fastAdd(String s)
     {
     	_set.add(s);
+    	_queue.add(s);
 	   return 0;
     }
    
@@ -98,9 +102,10 @@ public class PageidList {
    {
        while (_set.size() == 0)  
            wait();
-	   
-	   String s = _set.pollFirst();
-
+       
+	   String s = _queue.pop();
+	   _set.remove(s);
+       
 	   notify();
 	   return s;
    }
